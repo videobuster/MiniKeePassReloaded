@@ -51,9 +51,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Credits
 -------
-MiniKeePass
-Copyright 2011 Jason Rush and John Flanagan. All rights reserved.
+MiniKeePass Reloaded
+Copyright 2023 - Sascha Jürgens - videobuster.de/Netleih GmbH & Co. KG
 
+MiniKeyPass MainVersion - Jason Rush and John Flanagan
 German Translation - Florian Holzapfel<br />
 Japanese Translation - Katherine Lake<br />
 Russian Translation - Foster "Forst" Snowhill<br />
