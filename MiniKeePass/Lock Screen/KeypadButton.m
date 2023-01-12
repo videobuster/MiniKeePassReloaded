@@ -27,6 +27,7 @@
 @end
 
 @implementation KeypadButton
+@synthesize subtitleLabel = _subtitleLabel;
 
 - (instancetype)initWithTitle:(NSString *)title andSubtitle:(NSString *)subtitle {
     self = [super initWithFrame:CGRectMake(0, 0, KEYPAD_BUTTON_SIZE, KEYPAD_BUTTON_SIZE)];

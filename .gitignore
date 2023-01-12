@@ -3,3 +3,6 @@ private
 xcuserdata
 xcshareddata
 icon.sketch/QuickLook
+Frameworks/*
+Build/*
+MBProgressHUD/*
