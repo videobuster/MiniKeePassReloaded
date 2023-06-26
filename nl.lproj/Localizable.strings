@@ -139,6 +139,7 @@
 "Confirm PIN" = "Bevestig PIN";
 "PINs did not match. Try again" = "PINs komen niet overeen. Probeer opnieuw";
 "MiniKeePass version %@" = "MiniKeePass versie %@";
+"Please check app data protection settings." = "Please check app data protection settings.";
 
 // Help Titles
 "iTunes Import/Export" = "iTunes Import/Export";

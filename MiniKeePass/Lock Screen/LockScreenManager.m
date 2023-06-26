@@ -140,6 +140,11 @@ static LockScreenManager *sharedInstance = nil;
         return;
     }
 
+    AppSettings *appSettings = [AppSettings sharedInstance];
+    if (![appSettings touchIdEnabled]) {
+        return;
+    }
+    
     LAContext *context = [[LAContext alloc] init];
     context.localizedFallbackTitle = @""; // Hide the fallback button
 

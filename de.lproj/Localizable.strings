@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright 2011 Jason Rush and John Flanagan. All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -84,7 +84,8 @@
 
 // Settings Page
 "Settings" = "Einstellungen";
-"PIN Enabled" = "PIN aktiviert";
+"PIN Enabled" = "PIN";
+"Face ID" = "Face ID";
 "Touch ID" = "Touch ID"; // FIXME
 "Use your fingerprint as an alternative to entering a PIN if supported." = "Use your fingerprint as an alternative to entering a PIN if supported."; // FIXME
 "Lock Timeout" = "Sperrzeit";
@@ -137,6 +138,7 @@
 "Confirm PIN" = "PIN bestätigen";
 "PINs did not match. Try again" = "PINs stimmen nicht überein. Bitte erneut versuchen.";
 "MiniKeePass version %@" = "MiniKeePass Version %@";
+"Please check your data protection settings." = "Bitte prüf die Datenschutzeinstellungen der App.";
 
 // Help Titles
 "iTunes Import/Export" = "iTunes Im- und Export";

@@ -19,6 +19,36 @@ import UIKit
 import AudioToolbox
 import LocalAuthentication
 
+extension LAContext {
+    enum BiometricType: String {
+        case none
+        case touchID
+        case faceID
+    }
+
+    var biometricType: BiometricType {
+        var error: NSError?
+
+        guard self.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+            // Capture these recoverable error thru Crashlytics
+            return .none
+        }
+
+        if #available(iOS 11.0, *) {
+            switch self.biometryType {
+            case .none:
+                return .none
+            case .touchID:
+                return .touchID
+            case .faceID:
+                return .faceID
+            }
+        } else {
+            return  self.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) ? .touchID : .none
+        }
+    }
+}
+
 class SettingsViewController: UITableViewController, PinViewControllerDelegate {
     @IBOutlet weak var pinEnabledSwitch: UISwitch!
     @IBOutlet weak var pinLockTimeoutCell: UITableViewCell!
@@ -82,6 +112,7 @@ class SettingsViewController: UITableViewController, PinViewControllerDelegate {
     
     fileprivate var appSettings = AppSettings.sharedInstance()
     fileprivate var touchIdSupported = false
+    fileprivate var faceIdSupported = false
     fileprivate var tempPin: String? = nil
     
     override func viewDidLoad() {
@@ -91,8 +122,13 @@ class SettingsViewController: UITableViewController, PinViewControllerDelegate {
         versionLabel.text = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
 
         // Check if TouchID is supported
-        let laContext = LAContext()
-        touchIdSupported = laContext.canEvaluatePolicy(LAPolicy.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        if (LAContext().biometricType == .faceID) {
+            faceIdSupported = true;
+            touchIdSupported = true;
+        }
+        else if (LAContext().biometricType == .touchID) {
+            touchIdSupported = true;
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -148,8 +184,8 @@ class SettingsViewController: UITableViewController, PinViewControllerDelegate {
         
          // Enable/disable the components dependant on settings
         setCellEnabled(pinLockTimeoutCell, enabled: pinEnabled)
-        setCellEnabled(touchIdEnabledCell, enabled: pinEnabled && touchIdSupported)
-        touchIdEnabledSwitch.isEnabled = pinEnabled && touchIdSupported
+        setCellEnabled(touchIdEnabledCell, enabled: pinEnabled)
+        touchIdEnabledSwitch.isEnabled = pinEnabled /*&& touchIdSupported*/
         setCellEnabled(deleteAllDataEnabledCell, enabled: pinEnabled)
         setCellEnabled(deleteAllDataAttemptsCell, enabled: pinEnabled && deleteOnFailureEnabled)
         setCellEnabled(closeDatabaseTimeoutCell, enabled: closeEnabled)
@@ -247,7 +283,21 @@ class SettingsViewController: UITableViewController, PinViewControllerDelegate {
     }
     
     @IBAction func touchIdEnabledChanged(_ sender: UISwitch) {
-        self.appSettings?.setTouchIdEnabled(touchIdEnabledSwitch.isOn)
+        if (touchIdEnabledSwitch.isOn) {
+            //Test TouchID/FaceID
+            let myContext = LAContext()
+            let myLocalizedReasonString = ""
+            var authError: NSError?
+            
+            if myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &authError) {
+                self.appSettings?.setTouchIdEnabled(touchIdEnabledSwitch.isOn)
+            }
+            else {
+                touchIdEnabledSwitch.isOn = false
+                let alertController = UIAlertController(title: nil, message: NSLocalizedString("Please check app data protection settings.", comment: ""), preferredStyle: .actionSheet)
+                
+            }
+        }
     }
     
     @IBAction func deleteAllDataEnabledChanged(_ sender: UISwitch) {

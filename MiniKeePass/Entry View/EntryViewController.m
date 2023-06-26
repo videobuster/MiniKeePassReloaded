@@ -104,6 +104,7 @@ static NSString *TextFieldCellIdentifier = @"TextFieldCell";
     
     commentsCell = [[TextViewCell alloc] init];
     commentsCell.textView.editable = NO;
+    commentsCell.textView.dataDetectorTypes = UIDataDetectorTypeAll;
     commentsCell.textView.text = self.entry.notes;
     
     _defaultCells = @[titleCell, usernameCell, passwordCell, urlCell];
@@ -273,7 +274,7 @@ static NSString *TextFieldCellIdentifier = @"TextFieldCell";
         self.navigationItem.leftBarButtonItem = cancelButton;
 
         commentsCell.textView.editable = YES;
-
+        
         [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationFade];
     } else {
         self.navigationItem.leftBarButtonItem = nil;
@@ -551,10 +552,15 @@ static NSString *TextFieldCellIdentifier = @"TextFieldCell";
 }
 
 - (void)copyCellContents:(NSIndexPath *)indexPath {
-    self.tableView.allowsSelection = NO;
-
+    
+    if (![[self.tableView cellForRowAtIndexPath:indexPath] isKindOfClass:[TextFieldCell class]]) {
+        return;
+    }
+    
     TextFieldCell *cell = (TextFieldCell *)[self.tableView cellForRowAtIndexPath:indexPath];
 
+    self.tableView.allowsSelection = NO;
+    
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     pasteboard.string = cell.textField.text;
     
