@@ -282,21 +282,41 @@ class SettingsViewController: UITableViewController, PinViewControllerDelegate {
         }
     }
     
+    func touchIdSetupFailed() {
+        self.touchIdEnabledSwitch.isOn = false
+        self.appSettings?.setTouchIdEnabled(self.touchIdEnabledSwitch.isOn)
+        let alertController = UIAlertController(title: nil, message: NSLocalizedString("Please check app data protection settings.", comment: ""), preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default, handler: nil)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true, completion: nil)
+    }
+    
     @IBAction func touchIdEnabledChanged(_ sender: UISwitch) {
         if (touchIdEnabledSwitch.isOn) {
             //Test TouchID/FaceID
             let myContext = LAContext()
-            let myLocalizedReasonString = ""
+            let myLocalizedReasonString = "Setup"
             var authError: NSError?
             
-            if myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &authError) {
-                self.appSettings?.setTouchIdEnabled(touchIdEnabledSwitch.isOn)
+            if myContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
+                myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: myLocalizedReasonString) { success, evaluateError in
+                    DispatchQueue.main.async {
+                        if success {
+                            // User authenticated successfully, take appropriate action
+                            self.appSettings?.setTouchIdEnabled(self.touchIdEnabledSwitch.isOn)
+                        } else {
+                            self.touchIdSetupFailed();
+                        }
+                    }
+                }
             }
             else {
-                touchIdEnabledSwitch.isOn = false
-                let alertController = UIAlertController(title: nil, message: NSLocalizedString("Please check app data protection settings.", comment: ""), preferredStyle: .actionSheet)
-                
+                self.touchIdSetupFailed();
             }
+        }
+        
+        else {
+            self.appSettings?.setTouchIdEnabled(self.touchIdEnabledSwitch.isOn)
         }
     }
     

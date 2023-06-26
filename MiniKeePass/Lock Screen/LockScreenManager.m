@@ -134,6 +134,8 @@ static LockScreenManager *sharedInstance = nil;
 }
 
 - (void)showTouchId {
+    touchIDFailed = YES;
+
     // Check if TouchID is supported
     if (![NSClassFromString(@"LAContext") class]) {
         // Fallback to the PIN screen
@@ -155,8 +157,6 @@ static LockScreenManager *sharedInstance = nil;
         return;
     }
     
-    touchIDFailed = NO;
-    
     // Authenticate User
     [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
             localizedReason:NSLocalizedString(@"Unlock MiniKeePass", nil)
@@ -164,6 +164,7 @@ static LockScreenManager *sharedInstance = nil;
                           if (success) {
                               // Dismiss the lock screen
                               dispatch_async(dispatch_get_main_queue(), ^{
+                                  touchIDFailed = NO;
                                   [self hideLockScreen];
                               });
                           } else {
